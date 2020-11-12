@@ -11,7 +11,11 @@ var firebaseConfig = {
     appId: "1:986372699553:web:b8a017a5c11802106147e0",
     measurementId: "G-9L9Y43EGJT"
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+firebase.analytics();
+
 
 export default class Fire {
     constructor(callback) {
@@ -22,10 +26,12 @@ export default class Fire {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
+
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
                 callback(null);
-            } else {
+            }
+            else {
                 firebase.auth().signInAnonymously().catch(error => {
                     callback(error);
                 })
@@ -34,26 +40,35 @@ export default class Fire {
     }
 
     get ref() {
-        return firebase.firestore().collection("listTodoList");
+        return firebase.firestore().collection("List");
     }
 
     getLists(callback) {
-        let ref = this.ref.orderBy("name");
+        let ref = this.ref.orderBy("Name");
         this.unsubscribe = ref.onSnapshot(snapshot => {
             let lists = [];
             snapshot.forEach(doc => {
                 lists.push({ id: doc.id, ...doc.data() });
             });
             callback(lists);
-        },
-            function (error) {
-                console.error(error);
-            });
-
+        }, function (error) {
+            console.error(error);
+        });
     }
 
     addList(list) {
+        let ref = this.ref;
+        ref.add(list)
+    }
 
+    deleteList(list) {
+        let ref = this.ref;
+        ref.doc(list.id).delete();
+    }
+
+    updateList(list) {
+        let ref = this.ref;
+        ref.doc(list.id).update(list);
     }
 
     detach() {
