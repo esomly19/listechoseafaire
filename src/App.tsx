@@ -33,22 +33,20 @@ function App() {
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand>
           Todo APP
-          <Navbar.Collapse className="justify-content-end">
+          <Navbar.Collapse className="float-right">
             <CreateList></CreateList>
           </Navbar.Collapse>
         </Navbar.Brand>
       </Navbar>
       <div className="App">
-        <Container>
-          <Row>
-            {
-              lists.map((list, i) => {
+        <Container className="d-flex justify-content-between">
+          {
+            lists.map((list, i) => {
 
-                return (
-                  <TodoList list={list} />
-                );
-              })}
-          </Row>
+              return (
+                <TodoList list={list} />
+              );
+            })}
         </Container>
 
       </div>

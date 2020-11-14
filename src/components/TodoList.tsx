@@ -1,25 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from 'react-bootstrap/esm/Card';
 import { List } from '../models/List';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/esm/ListGroup';
-import ToggleButton from 'react-bootstrap/esm/ToggleButton';
 import Fire from '../Fire';
-import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Dropdown, DropdownButton, Form, Modal } from 'react-bootstrap';
 import { Todo } from '../models/TodoItem';
-import classNames from 'classnames';
+import ModalEditList from './ModalEditList';
+import ModalEditTodo from './ModalEditTodo';
 
 
 interface ListData {
     list: List;
-    /*AddTodo: () => void;
-    DeleteList: () => void;
-    EditListName: () => void;*/
 }
 
 
 export default function CardList(props: ListData) {
-    const [checked, setChecked] = React.useState(true);
+
+
     const [inputValue, setInputValue] = React.useState('');
 
     const handleDeleteList = () => {
@@ -81,32 +79,36 @@ export default function CardList(props: ListData) {
     }
 
     return (
-        <Card className="text-center" style={{ width: '30rem' }} >
-            <Card.Header><DropdownButton className=" btn btn-light  float-right" title="" id="bg-vertical-dropdown-2">
-                <Dropdown.Item eventKey="1" onClick={() => handleDeleteList()}>Delete List</Dropdown.Item>
-                <Dropdown.Item eventKey="1" onClick={() => handleDeleteList()}>Update List Name</Dropdown.Item>
-            </DropdownButton></Card.Header>
-            <Card.Title>{props.list.Name} </Card.Title>
-            <ListGroup variant="flush">
-                {props.list.Todos.map((todo, i) => (
-                    <> <ListGroup.Item>  {todo.Name}      <input className="float-left" type="checkbox" defaultChecked={todo.Completion} onChange={() => handleChangeChk(todo, i)} />
+        <>
 
-                        <Button className=" btn btn-light  float-right" onClick={() => handleDeleteTodo(todo)}>x</Button></ListGroup.Item></>
+            <Card className="text-center " style={{ width: '25rem', padding: '1em' }} >
+                <Card.Header><DropdownButton className=" btn btn-light  float-right" title="" id="bg-vertical-dropdown-2">
+                    <Dropdown.Item eventKey="1" onClick={() => handleDeleteList()}>Delete List</Dropdown.Item>
+                    <ModalEditList list={props.list}></ModalEditList>
+                </DropdownButton></Card.Header>
+                <Card.Title>{props.list.Name} </Card.Title>
+                <ListGroup variant="flush">
+                    {props.list.Todos.map((todo, i) => (
+                        <> <ListGroup.Item>  {todo.Name}
+                            <input className="float-left" type="checkbox" defaultChecked={todo.Completion} onChange={() => handleChangeChk(todo, i)} />
+                            <ModalEditTodo list={props.list} iid={i} ></ModalEditTodo>
+                            <Button className=" btn btn-light  float-right" onClick={() => handleDeleteTodo(todo)}>&#xff38;</Button></ListGroup.Item></>
 
-                ))}
-                <ListGroup.Item>
-                    <div className="input-group"><Form.Control
-                        id="outlined-error-helper-text"
-                        value={inputValue}
-                        onChange={handleChange}
-                    /><Button onClick={handleAddTodo}>+</Button> </div></ListGroup.Item>
-            </ListGroup>
-            <Card.Footer className="text-muted">{
-                "Tâches complétées : " +
-                props.list.Todos.filter(function (todo) {
-                    return todo.Completion;
-                }).length + " / " + props.list.Todos.length
-            }</Card.Footer>
-        </Card >
+                    ))}
+                    <ListGroup.Item>
+                        <div className="input-group"><Form.Control
+                            id="outlined-error-helper-text"
+                            value={inputValue}
+                            onChange={handleChange}
+                        /><Button onClick={handleAddTodo}>+</Button> </div></ListGroup.Item>
+                </ListGroup>
+                <Card.Footer className="text-muted">{
+                    "Tâches complétées : " +
+                    props.list.Todos.filter(function (todo) {
+                        return todo.Completion;
+                    }).length + " / " + props.list.Todos.length
+                }</Card.Footer>
+            </Card >
+        </>
     );
 }
